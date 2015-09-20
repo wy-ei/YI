@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <link href="assert/bootstrap-3.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style type="text/css">
+    #main-img{
+      display: block;
+      width: 100%;
+      border: 1px solid #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <img class="" id="main-img" src="1.jpg">  
+      </div>
+      <div class="col-md-4">
+        <form role="form">
+          <div class="form-group">
+            <label for="chooseImg">选择图片</label>
+            <input type="file" id="chooseImg">
+          </div>
+        </form>
+        <form>
+        <div class="form-group">
+          <label>选择处理方式</label>
+          <select class="form-control" id="select-process-method">
+            <option>灰度图</option>
+            <option>原图</option>
+            <option>8灰度级量化</option>
+            <option>16灰度级量化</option>
+            <option>32灰度级量化</option>
+            <option>二值化</option>
+            <option>灰度分布直方图</option>
+            <option>线性对比度展宽</option>
+          </select>
+        </div>
+        </form>
+        <form>
+        <div class="form-inline" id="binarization">
+          <div class="form-group">
+            <label for="binarization-value">阈值</label>
+            <input type="text" class="form-control" id="binarization-value" placeholder="0~255">
+            <button type="submit" class="btn btn-default">确定</button>
+          </div>
+        </div>
+        </form>
+        <form id="LinTranLP">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-xs-1 control-label">a:</label>
+                <div class="col-xs-11">
+                  <input type="text" class="form-control" id="LinTranLP-a" placeholder="0~255">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-1 control-label">b:</label>
+                <div class="col-xs-11">
+                  <input type="text" class="form-control" id="LinTranLP-b" placeholder="0~255">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-1 control-label">ga:</label>
+                <div class="col-xs-11">
+                  <input type="text" class="form-control" id="LinTranLP-ga" placeholder="0~255">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-1 control-label">gb:</label>
+                <div class="col-xs-11">
+                  <input type="text" class="form-control" id="LinTranLP-gb" placeholder="0~255">
+                </div>
+            </div>
+            <div class="form-group">
+              <div class="col-xs-11 col-xs-offset-1">
+                <button type="submit" class="btn btn-default">确定</button>
+              </div>
+            </div>
+        </div>
+      </form>
+      </div>
+    </div>
+
+  </div>
+  <script src="assert/jquery-2.1.4.min.js"></script>
+  <script src="assert/bootstrap-3.3.5/dist/js/bootstrap.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
