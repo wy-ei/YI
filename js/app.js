@@ -10,9 +10,10 @@ $(document).ready(function(){
         }
     });
     $("#select-process-method").on("change",function(event){
+        init();
         var processMethodName = this.value;
         var method = process[processMethodName];
-         init();
+        
         if(method){
             method();
         }
@@ -68,28 +69,66 @@ $(document).ready(function(){
             $button = $("#LinTranLP button");
             if( !$button.attr("binded") ){
                 $button.on("click",function(event){
-                    alert("click");
+                    event.preventDefault();
                     var a=100,b=180,ga=50,gb=220;
                     var inputs = $("#LinTranLP input");
                     inputs.each(function(){
                         var $this = $(this);
                         var id = $this.attr("id");
+                        var nan = false;
                         if(  isNaN( parseInt($this.val(),10)  )  ){
-                            alert("请正确设置a,b,ga,gb的值");
-                            return false;
-                        }else if( id === "LinTranLP-a"){
-                            a = $this.val();
+                            nan = true;
+                        }
+                        if( id === "LinTranLP-a"){
+                            if(nan){
+                                $this.val(a);
+                            }else{
+                                a = $this.val();
+                            }
                         }else if( id  === "LinTranLP-b"){
-                            b = $this.val();
+                            if(nan){
+                                $this.val(b);
+                            }else{
+                                b = $this.val();
+                            }
                         }else if( id === "LinTranLP-ga"){
-                            ga = $this.val();
+                            if(nan){
+                                $this.val(ga);
+                            }else{
+                                ga = $this.val();
+                            }
                         }else if( id === "LinTranLP-gb"){
-                            gb = $this.val();
+                            if(nan){
+                                $this.val(gb);
+                            }else{
+                                gb = $this.val();
+                            }
                         }
                     });
+                    var canvas = $("#LinTranLPCanvas").show().get(0);
+                    $(canvas).attr({width:300,height:300});
+                    var cxt = canvas.getContext('2d');
+                    cxt.clearRect(0,0,300,300);
+                   
+                    cxt.moveTo(0, 300-0);
+                    cxt.lineTo(a,300-ga);
+                    cxt.lineTo(b,300-gb);
+                    cxt.lineTo(255,300-255);
+                    // cxt.moveTo(20, 20);
+                    // cxt.lineTo(20,300);
+                    // cxt.moveTo(20,20);
+                    // cxt.lineTo(300,20);
+                    cxt.stroke();
+
+                    cxt.fillText("0",0,300);
+                    cxt.fillText(""+a+","+ga,a,300-ga);
+                    cxt.fillText(""+b+","+gb,b,300-gb);
+                    cxt.textAlign = "center";
+                    cxt.fillText("对比度线性展宽映射关系",150,30);
+                    $(this).hide();
                     photoProcessor.LinTranLP(a,b,ga,gb);
                     photoProcessor.setImg();
-                    event.preventDefault();
+                    $(this).show();
                 });
                 $button.attr("bined",true);
             }
@@ -183,10 +222,10 @@ PhotoProcessor.prototype.binarization = function(n){
 
 PhotoProcessor.prototype.geryDistributionChart　= function(){
     var canvas = document.createElement("canvas");
-    $(canvas).attr({width:256*3,height:500});
+    $(canvas).attr({width:256*3+20,height:500});
     var cxt = canvas.getContext('2d');
     cxt.fillStyle = "#fff";
-    cxt.fillRect(0,0,256*3,500);
+    cxt.fillRect(0,0,256*3+20,500);
     this.grey();
     var data = this.imgData.data;
     var arr = new Array(256);
@@ -202,9 +241,17 @@ PhotoProcessor.prototype.geryDistributionChart　= function(){
     cxt.lineWidth = "1px";
     cxt.beginPath();
     for(i=0;i<=256;i++){   
-        cxt.moveTo(i*3,500);
-        cxt.lineTo(i*3,Math.floor((1-(arr[i]/maxCount))*500+30));
+        cxt.moveTo(i*3,490);
+        cxt.lineTo(i*3,Math.floor((1-(arr[i]/maxCount))*490));
     }
+    cxt.font = "bold 16px Arial";
+    cxt.fillStyle = "#000";
+    for(i = 0;i<255;i+=50){
+        cxt.fillText(""+i,3*i,500);
+    }
+    cxt.textAlign = 'center';
+    cxt.fillText("灰度分布直方图",256*3/2,30);
+
     //
     cxt.stroke();
     

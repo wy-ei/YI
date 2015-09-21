@@ -3,11 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <title>Document</title>
-  <link href="assert/bootstrap-3.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+  <link href="http://apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
   <style type="text/css">
+    body{
+      padding-top: 30px;
+    }
+    canvas{
+      width: 100%;
+      display: none;
+    }
     #main-img{
       display: block;
       width: 100%;
+      padding-bottom: 30px;
+    }
+    canvas{
       border: 1px solid #333;
     }
   </style>
@@ -16,7 +27,7 @@
   <div class="container">
     <div class="row">
       <div class="col-md-8">
-        <img class="" id="main-img" src="1.jpg">  
+        <img class="" id="main-img">  
       </div>
       <div class="col-md-4">
         <form role="form">
@@ -29,8 +40,8 @@
         <div class="form-group">
           <label>选择处理方式</label>
           <select class="form-control" id="select-process-method">
-            <option>灰度图</option>
             <option>原图</option>
+            <option>灰度图</option>
             <option>8灰度级量化</option>
             <option>16灰度级量化</option>
             <option>32灰度级量化</option>
@@ -45,11 +56,14 @@
           <div class="form-group">
             <label for="binarization-value">阈值</label>
             <input type="text" class="form-control" id="binarization-value" placeholder="0~255">
+          </div>
+          <div class="form-group">
             <button type="submit" class="btn btn-default">确定</button>
           </div>
         </div>
         </form>
         <form id="LinTranLP">
+        <canvas id="LinTranLPCanvas"></canvas>
         <div class="form-horizontal">
             <div class="form-group">
                 <label class="col-xs-1 control-label">a:</label>
@@ -81,13 +95,14 @@
               </div>
             </div>
         </div>
+
       </form>
       </div>
     </div>
 
   </div>
-  <script src="assert/jquery-2.1.4.min.js"></script>
-  <script src="assert/bootstrap-3.3.5/dist/js/bootstrap.min.js"></script>
+  <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.js"></script>
+  <script src="http://apps.bdimg.com/libs/bootstrap/3.3.4/js/bootstrap.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
