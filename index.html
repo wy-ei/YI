@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Document</title>
   <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
-  <link href="http://apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+   <link href="http://apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
   <style type="text/css">
     body{
       padding-top: 30px;
@@ -99,8 +99,45 @@
               </div>
             </div>
         </div>
-
       </form>
+      <div id="LinearDynamicRangeAdjustment" class="form-horizontal">
+        <form>
+          <div class="form-group">
+                <label class="col-xs-1 control-label">a:</label>
+                <div class="col-xs-11">
+                  <input type="text" class="form-control" id="LDRA-a" placeholder="0~255">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-1 control-label">b:</label>
+                <div class="col-xs-11">
+                  <input type="text" class="form-control" id="LDRA-b" placeholder="0~255">
+                </div>
+            </div>
+            <div class="form-group">
+              <div class="col-xs-11 col-xs-offset-1">
+                <button type="submit" class="btn btn-default">确定</button>
+              </div>
+            </div>
+        </form>
+      </div>
+
+      <div id="unLinearDynamicRangeAdjustment" class="form-horizontal">
+        <form>
+          <div class="form-group">
+                <label class="col-xs-1 control-label">c:</label>
+                <div class="col-xs-11">
+                  <input type="text" class="form-control" id="ULDRA-c" placeholder="0~255">
+                </div>
+            </div>
+            <div class="form-group">
+              <div class="col-xs-11 col-xs-offset-1">
+                <button type="submit" class="btn btn-default">确定</button>
+              </div>
+            </div>
+        </form>
+      </div>
+
       </div>
     </div>
 

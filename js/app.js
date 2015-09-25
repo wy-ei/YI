@@ -22,6 +22,8 @@ $(document).ready(function() {
     function init() {
         $("#binarization").hide();
         $("#LinTranLP").hide();
+        $("#LinearDynamicRangeAdjustment").hide();
+        $("#unLinearDynamicRangeAdjustment").hide();
     }
     init();
     var process = {
@@ -141,6 +143,43 @@ $(document).ready(function() {
         },
         "伪彩色": function() {
             photoProcessor.pseudoColor();
+            photoProcessor.setImg();
+        },
+        "线性动态范围调整":function(){
+            $("#LinearDynamicRangeAdjustment").show();
+            if( $("#LinearDynamicRangeAdjustment button").attr("binded") ){
+                return;
+            }
+            $("#LinearDynamicRangeAdjustment button").click(function(event){
+                event.preventDefault();
+                var a = parseInt($("#LDRA-a").val());
+                var b = parseInt($("#LDRA-b").val());
+                if(isNaN(a)||isNaN(b)||a<0||a>255||b<0||b>255){
+                    alert("请输入0~255之间的数");
+                }
+                photoProcessor.LinearDynamicRangeAdjustment(a,b);
+                photoProcessor.setImg();
+                $(this).attr("binded",true);
+            });
+        },
+        "非线性动态范围调整":function(){
+            $("#unLinearDynamicRangeAdjustment").show();
+            if( $("#unLinearDynamicRangeAdjustment button").attr("binded") ){
+                return;
+            }
+            $("#unLinearDynamicRangeAdjustment button").click(function(event){
+                event.preventDefault();
+                var c = parseInt($("#ULDRA-c").val());
+                if(isNaN(c)){
+                    alert("请输入合法的数值");
+                }
+                photoProcessor.unLinearDynamicRangeAdjustment(c);
+                photoProcessor.setImg();
+                $(this).attr("binded",true);
+            });
+        },
+        "直方图均衡化":function(){
+            photoProcessor.ZF();
             photoProcessor.setImg();
         }
     };
@@ -385,6 +424,85 @@ PhotoProcessor.prototype.pseudoColor = function(){
     this.imgData.data = data;
 };
 
-PhotoProcessor.prototype.LinearDynamicRangeAdjustment = function(){
-
+PhotoProcessor.prototype.LinearDynamicRangeAdjustment = function(a,b){
+    var fn = (function(){
+        var 
+            _k = 255 / (b-a),
+            _b = 255 - _k * b;
+        return function(n){
+            var ret = 255;
+            if(n<a){
+                ret = 0;
+            }else if(n<b){
+                ret = _k*n+_b;
+            }
+            return ret;
+        }
+    })();
+    var data = this.getData();
+    for(var i=0,len = data.length;i<len;i+=4){
+        data[i] = fn(data[i]);
+        data[i+1] = fn(data[i+1]); 
+        data[i+2] = fn(data[i+2]);
+    }
+    this.imgData.data = data;
 };
+
+
+PhotoProcessor.prototype.unLinearDynamicRangeAdjustment = function(c){
+    function fn(n){
+        var ret = 0;
+        ret = c*Math.log(1+n);
+        return ret;
+    }
+    var data = this.getData();
+    for(var i=0,len = data.length;i<len;i+=4){
+        data[i] = fn(data[i]);
+        data[i+1] = fn(data[i+1]); 
+        data[i+2] = fn(data[i+2]);
+    }
+    this.imgData.data = data;
+};
+
+PhotoProcessor.prototype.ZF = function(){
+    this.grey();
+    var data = this.imgData.data;
+    var arrR = new Array(256);
+    var arrG = new Array(256);
+    var arrB = new Array(256);
+    for (var i = 0; i <= 255; i++) {
+        arrR[i] = arrG[i] = arrB[i] = 0;
+    }
+    for (var i = 0, len = data.length; i < len; i += 4) {
+        arrR[data[i]] = arrR[data[i]] + 1;
+        arrG[data[i+1]] = arrG[data[i+1]] + 1;
+        arrG[data[i+2]] = arrG[data[i+2]] + 1;
+    }
+    var pfR = new Array(256);
+    var pfG = new Array(256);
+    var pfB = new Array(256);
+    var total = data.length/4;
+    for(var i=0;i<=255;i++){
+        pfR[i] = arrR[i]/total;
+        pfG[i] = arrG[i]/total;
+        pfB[i] = arrB[i]/total;
+    }
+    var paR = new Array(256);
+    var paG = new Array(256);
+    var paB = new Array(256);
+
+    paR[0]= pfR[0];
+    paG[0]= pfG[0];
+    paB[0]= pfB[0];
+    for(var i=1;i<=255;i++){
+        paR[i] = paR[i-1]+pfR[i];
+        paG[i] = paG[i-1]+pfG[i];
+        paB[i] = paB[i-1]+pfB[i];
+    }
+    for(var i=0,len=data.length;i<len;i+=4){
+        data[i] = 255*paR[data[i]];
+        data[i+1] = 255*paG[data[i]];
+        data[i+2] = 255*paB[data[i]];
+    }
+    this.imgData.data = data;
+}
