@@ -11,7 +11,7 @@
     body {
         position: absolute;
         height: 100%;
-        overflow: hidden;
+		overflow:hidden;
         width: 100%;
         margin: 0;
     }
@@ -21,23 +21,27 @@
     }
     
     canvas {
-        display: none;
+		margin: auto;
+		display:block;
+    }
+    .show{
+    	display:block;
     }
     
     #source-img {
         display: block;
         margin: auto;
     }
-    
-    canvas {
-        border: 1px solid #333;
+    #choose-operator{
+    	display:none;
     }
+
     </style>
 </head>
 
 <body>
     <div class="container">
-        <div class="row">
+        <div class="row" id="header">
             <div class="page-header">
                 <h1>数字图像处理</h1>
             </div>
@@ -59,7 +63,7 @@
                         </form>
                     </div>
                 </div>
-                <div class="panel panel-default">
+                <div class="panel panel-default" id="choose-operator">
                     <div class="panel-heading">
                         <h3 class="panel-title">请选择要进行的操作：</h3>
                     </div>
@@ -75,7 +79,7 @@
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a href="#" data-method="ml">最大类间、类内方差比法</a></li>
+                                    <li><a href="#" data-method="mr">最大类间、类内方差比法</a></li>
                                     <li><a href="#" data-method="otsu">最大类间方差法</a></li>
                                     <li><a href="#" data-method="binary">自定义阈值法</a></li>
                                 </ul>
@@ -89,6 +93,7 @@
                                     <li><a href="#" data-method="mean">均值滤波</a></li>
                                     <li><a href="#" data-method="mid">中值滤波</a></li>
                                     <li><a href="#" data-method="gaussianBlur">高斯滤波</a></li>
+                                    <li><a href="#" data-method="knn">KNN 滤波</a></li>
                                 </ul>
                             </div>
                             <div class="btn-group" role="group">
@@ -102,6 +107,8 @@
                                     <li><a href="#" data-method="soble">Soble 算子</a></li>
                                     <li><a href="#" data-method="laplace">Laplace 算子</a></li>
                                     <li><a href="#" data-method="canny">Canny 算子</a></li>
+                                    <li><a href="#" data-method="roberts">Roberts 算子</a></li>
+                                    <li><a href="#" data-method="wallis">Wallis 算子</a></li>
                                 </ul>
                             </div>
                             <button type="button" class="btn btn-default" data-method="sepia">复古</button>
@@ -110,13 +117,45 @@
                             <button type="button" class="btn btn-default" data-method="posterize">色调分离</button>
                             <button type="button" class="btn btn-default" data-method="embossment">浮雕效果</button>
                             <button type="button" class="btn btn-default" data-method="gamma">gamma 调节</button>
-                            <button type="button" class="btn btn-default" data-method="sketch">素描</button>
+                            <button type="button" class="btn btn-default" data-method="salt">椒盐噪声</button>
+                            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal" data-method="histogram">查看直方图</button>
                         </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">处理状态：</h3>
+                    </div>
+                    <div class="panel-body">
+						<p id="state">未开始:</p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </div>	
+
+	
+
+	<!-- Modal -->
+	<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+	  <div class="modal-dialog modal-lg" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="modalLabel">Modal title</h4>
+	      </div>
+	      <div class="modal-body">
+			<canvas id="histogram" width="700" height="400"></canvas>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+
     <!--
     <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.js"></script>
     <script src="http://apps.bdimg.com/libs/bootstrap/3.3.4/js/bootstrap.js"></script>
@@ -124,6 +163,7 @@
     <script src="js/jquery-2.1.4.min.js"></script>
     <script src="assert/bootstrap/js/bootstrap.min.js"></script>
     <script src='js/YI.js'></script>
+    <script src='js/Chart.min.js'></script>
     <script src="js/app.js"></script>
 </body>
 
