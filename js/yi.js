@@ -1,8 +1,9 @@
 /*
  * yi.js   
- * description:a little photo process library
+ * description:image process library
  * author:wy
  * e-mail:nameiswangyu@163.com
+ * License:MIT
  */
 
 (function(window) {
