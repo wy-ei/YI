@@ -2,6 +2,8 @@
 
 一个基于 HTML5 Canvas 的图像处理库
 
+[查看demo](http://wy-ei.com/yi.js/)
+
 ## 使用方法
 
 1. 引入 yi.js
