@@ -51,7 +51,7 @@
         return this;
     };
     YI.fn.replace = function(img) {
-        var dataURL = this.canvas.toDataURL("image/bmp");
+        var dataURL = this.canvas.toDataURL("image/jpeg");
         img.setAttribute('src', dataURL);
         return this;
     };
@@ -64,8 +64,8 @@
         return data;
     };
 
-    YI.fn.histogram = function(){
-    	var imageData = this.getData(),
+    YI.fn.histogram = function() {
+        var imageData = this.getData(),
             data = imageData.data,
             histogram = new Array(256);
         for (var i = 0; i < 256; i++) {
@@ -112,31 +112,7 @@
         this.setData(imageData);
         return this;
     }
-    YI.fn.sharp = function() {
-        var imageData = this.getData(),
-            data = imageData.data,
-            width = imageData.width,
-            height = imageData.height,
-            lamta = 1.6;
-        for (var i = 0, len = data.length; i < len; i += 4) {
-            var ii = i / 4;
-            var row = parseInt(ii / width);
-            var col = ii % width;
-            if (row == 0 || col == 0) continue;
-
-            var A = ((row - 1) * width + (col - 1)) * 4;
-            var B = ((row - 1) * width + col) * 4;
-            var E = (ii - 1) * 4;
-
-            for (var j = 0; j < 3; j++) {
-                var delta = data[i + j] - (data[B + j] + data[E + j] + data[A + j]) / 3;
-                data[i + j] += delta * lamta;
-            }
-        }
-        this.setData(imageData);
-        return this;
-    }
-
+   
     YI.fn.posterize = function() {
         var imageData = this.getData(),
             data = imageData.data;
@@ -150,34 +126,7 @@
         return this;
     };
 
-    YI.fn.embossment = function() {
-        var imageData = this.getData(),
-            data = imageData.data,
-            width = imageData.width,
-            height = imageData.height;
 
-        var outData = [];
-        for (var i = 0, n = data.length; i < n; i += 4) {
-
-            var ii = i / 4;
-            var row = parseInt(ii / width);
-            var col = ii % width;
-            var A = ((row - 1) * width + (col - 1)) * 4;
-            var G = (row + 1) * width * 4 + (col + 1) * 4;
-
-            if (row == 0 || col == 0) continue;
-            for (var j = 0; j < 3; j++) {
-                outData[i + j] = data[A + j] - data[G + j] + 127.5;
-            }
-            outData[i + 4] = data[i + 4];
-        }
-
-        for (var i = 0, n = data.length; i < n; i++) {
-            data[i] = outData[i] || data[i];
-        }
-        this.setData(imageData);
-        return this;
-    }
 
     YI.fn.gamma = function(g) {
         var imageData = this.getData(),
@@ -235,7 +184,7 @@
         return this;
 
     };
-    YI.fn.flip = function() {
+    YI.fn.invert = function() {
         var imageData = this.getData(),
             data = imageData.data;
         for (var i = 0, len = data.length; i < len; i += 4) {
@@ -328,41 +277,51 @@
                 for (var i = 0; i < 256; i++) {
                     histogram[i] /= size;
                 }
-                var max = -Infinity;
+                var max = -Infinity,
+                    variance1 = 0,
+                    variance2 = 0,
+                    average1 = 0,
+                    average2 = 0,
+                    average = 0,
+                    p = 0;
+                for (var i = 0; i < 256; i++) {
+                    average += histogram[i] * i;
+                }
                 for (i = 0; i < 256; i++) {
-                    var variance1 = 0,
+                    variance1 = 0,
                         variance2 = 0,
                         average1 = 0,
                         average2 = 0,
-                        average = 0,
-                        p = 0;
+                        average = 0;
+
+                    p += histogram[i];
+
                     for (var j = 0; j < 256; j++) {
-                        if (j < i) {
-                            average1 += histogram[j] * j;
-                            p += histogram[j];
+                        if (j <= i) {
+                            average1 += (histogram[j] / p) * j;
                         } else {
-                            average2 += histogram[j] * j;
+                            average2 += (histogram[j] / (1 - p)) * j;
                         }
                     }
                     for (var j = 0; j < 256; j++) {
-                        if (j < i) {
+                        if (j <= i) {
                             variance1 += Math.pow(j - average1, 2) * size * histogram[j];
                         } else {
                             variance2 += Math.pow(j - average2, 2) * size * histogram[j];
                         }
                     }
-                    average = average1 + average2;
 
                     var a1 = p * Math.pow(average1 - average, 2) + (1 - p) * Math.pow(average2 - average, 2);
                     var a2 = p * variance1 + (1 - p) * variance2;
                     if (a1 / a2 > max) {
                         max = a1 / a2;
                         th = i;
+                        console.log(th, a1, a2);
                     }
                 }
                 _threshold("binary", th);
             } else {
-                _threshold("binary", th);
+                _threshold("otsu");
             }
         }
         _threshold(type, th);
@@ -373,7 +332,7 @@
     // helper
     YI.fn._value = function(data, x, y, value) {
         var width = this.width,
-            index = (x * width + y) * 4;
+            index = (y * width + x) * 4;
         //getter
         if (value == null) {
             var ret = [];
@@ -461,6 +420,14 @@
             h = this.height;
         var rowOffset = Math.floor(row / 2),
             colOffset = Math.floor(col / 2);
+        _rowOffset = rowOffset,
+            _colOffset = colOffset;
+        if (rowOffset % 2 == 0) {
+            _rowOffset = rowOffset - 1;
+        }
+        if (colOffset % 2 == 0) {
+            _colOffset = colOffset - 1;
+        }
         var val;
         var ret = [];
         for (var i = rowOffset, rowLen = h - rowOffset; i < rowLen; i++) {
@@ -472,8 +439,9 @@
                         [],
                         []
                     ];
-                    for (var x = -rowOffset; x <= rowOffset; x++) {
-                        for (var y = -colOffset; y <= colOffset; y++) {
+
+                    for (var x = -rowOffset; x <= _rowOffset; x++) {
+                        for (var y = -colOffset; y <= _colOffset; y++) {
                             var arr = this._value(data, i + x, j + y);
                             var m = matrixs[n][x + rowOffset][y + colOffset];
                             val[0].push(arr[0] * m);
@@ -504,7 +472,15 @@
         var w = this.width,
             h = this.height;
         var rowOffset = Math.floor(row / 2),
-            colOffset = Math.floor(col / 2);
+            colOffset = Math.floor(col / 2),
+            _rowOffset = rowOffset,
+            _colOffset = colOffset;
+        if (rowOffset % 2 == 0) {
+            _rowOffset = rowOffset - 1;
+        }
+        if (colOffset % 2 == 0) {
+            _colOffset = colOffset - 1;
+        }
         var val;
         for (var i = rowOffset, rowLen = h - rowOffset; i < rowLen; i++) {
             for (var j = colOffset, colLen = w - colOffset; j < colLen; j++) {
@@ -513,8 +489,8 @@
                     [],
                     []
                 ];
-                for (var x = -rowOffset; x <= rowOffset; x++) {
-                    for (var y = -colOffset; y <= colOffset; y++) {
+                for (var x = -rowOffset; x <= _rowOffset; x++) {
+                    for (var y = -colOffset; y <= _colOffset; y++) {
                         var arr = this._value(data, i + x, j + y);
                         var n = matrix[x + rowOffset][y + colOffset];
                         val[0].push(arr[0] * n);
@@ -537,29 +513,29 @@
         return retData;
     }
 
-    function getKnnAverage(arr,n){
-    	var mid = arr[Math.floor(arr.length/2)];
-    		min = Infinity,
-    		index = 0,
-    		knnArr = [];
-    		
-    	for(var i=0;i<n;i++){
-    		for(var j=0,len=arr.length;j<len;j++){
-    			var diff = Math.abs(arr[i]-min);
-    			if(diff < min){
-    				min = diff;
-    				index = j;
-    			}
-    		}
-    		knnArr.push(arr[index]);
-    		arr.splice(index, 1);
-    		min = Infinity;
-    	}
-    	return YI.sum(knnArr)/knnArr.length;
+    function getKnnAverage(arr, n) {
+        var mid = arr[Math.floor(arr.length / 2)];
+        min = Infinity,
+            index = 0,
+            knnArr = [];
+
+        for (var i = 0; i < n; i++) {
+            for (var j = 0, len = arr.length; j < len; j++) {
+                var diff = Math.abs(arr[i] - min);
+                if (diff < min) {
+                    min = diff;
+                    index = j;
+                }
+            }
+            knnArr.push(arr[index]);
+            arr.splice(index, 1);
+            min = Infinity;
+        }
+        return YI.sum(knnArr) / knnArr.length;
     }
 
-	function copyData (src,dst){
-    	for (var i = 0, len = dst.length; i < len; i += 4) {
+    function copyData(src, dst) {
+        for (var i = 0, len = dst.length; i < len; i += 4) {
             dst[i] = src[i];
             dst[i + 1] = src[i + 1];
             dst[i + 2] = src[i + 2];
@@ -600,25 +576,25 @@
                 [2, 4, 5, 4, 2]
             ], 1 / 139);
 
-        }else if(type == 'knn'){
-        	newData = this.applyMatrix(data,[
-        		[1,1,1],
-        		[1,1,1],
-        		[1,1,1]
-        	],function(arr){
-        		var ret = [0,0,0];
-        		ret[0] = getKnnAverage(arr[0],5);
-        		ret[1] = getKnnAverage(arr[1],5);
-        		ret[2] = getKnnAverage(arr[2],5);
-        		return ret;
-        	});
+        } else if (type == 'knn') {
+            newData = this.applyMatrix(data, [
+                [1, 1, 1],
+                [1, 1, 1],
+                [1, 1, 1]
+            ], function(arr) {
+                var ret = [0, 0, 0];
+                ret[0] = getKnnAverage(arr[0], 5);
+                ret[1] = getKnnAverage(arr[1], 5);
+                ret[2] = getKnnAverage(arr[2], 5);
+                return ret;
+            });
 
         }
-        copyData(newData,data);
+        copyData(newData, data);
         this.setData(imageData);
         return this;
     };
-    
+
     YI.fn.differentialOperator = function(type) {
         var imageData = this.getData(),
             data = imageData.data,
@@ -629,14 +605,14 @@
                 [0, 0, 0],
                 [-1, -2, -1]
             ]);
-            
+
         } else if (type == 'vertical') {
             newData = this.applyMatrix(data, [
                 [1, 0, -1],
                 [2, 0, -2],
                 [1, 0, -1]
             ]);
-            
+
         } else if (type == 'soble') {
             newData = this.applyMultiMatrix(data, [
                 [
@@ -659,14 +635,14 @@
                 }
                 return ret;
             });
-            
+
         } else if (type == 'laplace') {
             newData = this.applyMatrix(data, [
                 [0, -1, 0],
                 [-1, 4, -1],
                 [0, -1, 0]
             ]);
-            
+
         } else if (type == 'canny') {
             newData = this.applyMultiMatrix(data, [
                 [
@@ -689,86 +665,106 @@
                 }
                 return ret;
             });
-            
-        }else if(type == 'roberts'){
-        	newData = this.applyMultiMatrix(data,[
-        		[
-        			[-1,0,0],
-        			[0,1,0],
-        			[0,0,0]
-        		],
-        		[	
-        			[0,-1,0],
-        			[1,0,0],
-        			[0,0,0]
-        		]
-        	],function(arr){
-        		var ret = [0,0,0],
-        			m1 = arr[0],
-        			m2 = arr[1];
-        		for(var i=0;i<3;i++){
-        			ret[i] = Math.abs(YI.sum(m1[i])) + Math.abs(YI.sum(m2[i]));
-        		}
-        		return ret;
-        	});
-        }else if(type == 'wallis'){
-        	newData = this.applyMatrix(data, [
-                [0, -1, 0],
-                [-1, 4, -1],
-                [0, -1, 0]
-            ],function(arr){
-            	var ret = [0,0,0];
-            	for(var i=0;i<3;i++){
-            		ret[i] = arr[i].reduce(function(pre,current,index){
-            			if(current != 0){
-            				if(index == 4){
-            					current = 4*Math.log(current/4)/Math.log(2);
-            				}else if(index == 1){
-            					current =  - Math.log(Math.abs(current))/Math.log(2);
-            				}else{
-            					current =  Math.log(Math.abs(current))/Math.log(2);
-            				}
-            			}
-            			return pre + current;
-            		},0);
-            	}
-            	return ret;
+
+        } else if (type == 'roberts') {
+            newData = this.applyMultiMatrix(data, [
+                [
+                    [-1, 0, 0],
+                    [0, 1, 0],
+                    [0, 0, 0]
+                ],
+                [
+                    [0, -1, 0],
+                    [1, 0, 0],
+                    [0, 0, 0]
+                ]
+            ], function(arr) {
+                var ret = [0, 0, 0],
+                    m1 = arr[0],
+                    m2 = arr[1];
+                for (var i = 0; i < 3; i++) {
+                    ret[i] = Math.abs(YI.sum(m1[i])) + Math.abs(YI.sum(m2[i]));
+                }
+                return ret;
+            });
+        } else if (type == 'wallis') {
+            newData = this.applyMatrix(data, [
+                [0, 1, 0],
+                [1, 1, 1],
+                [0, 1, 0]
+            ], function(arr) {
+                var ret = [0, 0, 0];
+                for (var i = 0; i < 3; i++) {
+                    ret[i] = 46 * arr[i].reduce(function(pre, current, index) {
+                        if (current != 0) {
+                            if (index == 4) {
+                                current = 4 * Math.log(current + 1);
+                            } else {
+                                current = -Math.log(Math.abs(current) + 1);
+                            }
+                        }
+                        return pre + current;
+                    }, 0);
+                }
+                return ret;
+            });
+        } else if (type == 'priwitt') {
+            newData = this.applyMultiMatrix(data, [
+                [
+                    [-1, 0, 1],
+                    [-1, 0, 1],
+                    [-1, 0, 1]
+                ],
+                [
+                    [-1, -1, -1],
+                    [0, 0, 0],
+                    [1, 1, 1]
+                ]
+            ], function(arr) {
+                var m1 = arr[0],
+                    m2 = arr[1];
+                var ret = [0, 0, 0];
+                for (var i = 0; i < 3; i++) {
+                    ret[i] = Math.sqrt(Math.pow(YI.sum(m1[i]), 2) +
+                        Math.pow(YI.sum(m2[i]), 2));
+                }
+                return ret;
             });
         }
-        copyData(newData,data);
+        copyData(newData, data);
         this.setData(imageData);
         return this;
     };
-    YI.fn.noise = function(type,n,r){
-    	var imageData = this.getData(),
+    YI.fn.noise = function(type, n, r) {
+        var imageData = this.getData(),
             data = imageData.data,
             width = this.width,
             height = this.height;
-        if(type == 'salt'){
-        	n = n || 100;
-        	r = r||1;
-        	var offset = Math.floor(r/2);
-        	for(var i=0;i<n;i++){
-        		var x = offset + Math.floor(Math.random()*(height-offset));
-        		var y = offset + Math.floor(Math.random()*(width-offset));
-        		var salt = Math.random() > 0.5 ? 255:0;
-        		if(r!=1){
-        			
-        			var k;
-        			if(r%2==0){
-        				k = offset-1;
-        			}else{
-        				k = offset;
-        			}
-        			for(var xo=-offset;xo<=k;xo++){
-        				for(var yo=-offset;yo<=k;yo++){
-        					this._value(data,x+xo,y+yo,salt);
-        				}
-        			}
-        		}else{
-        			this._value(data,x,y,salt);
-        		}
-        	}
+        if (type == 'salt') {
+            n = n || 100;
+            r = r || 1;
+            var offset = Math.floor(r / 2);
+            for (var i = 0; i < n; i++) {
+                var x = offset + Math.floor(Math.random() * (height - offset));
+                var y = offset + Math.floor(Math.random() * (width - offset));
+                var salt = Math.random() > 0.5 ? 255 : 0;
+                if (r != 1) {
+
+                    var k;
+                    if (r % 2 == 0) {
+                        k = offset - 1;
+                    } else {
+                        k = offset;
+                    }
+                    for (var xo = -offset; xo <= k; xo++) {
+                        for (var yo = -offset; yo <= k; yo++) {
+                            this._value(data, x + xo, y + yo, salt);
+                        }
+                    }
+                } else {
+                    this._value(data, x, y, salt);
+                }
+            }
         }
         this.setData(imageData);
         return this;
@@ -786,7 +782,95 @@
         }
         this.setData(imageData);
         return this;
+    };
+
+    // 浮雕
+    YI.fn.embossment = function() {
+        var imageData = this.getData(),
+            data = imageData.data,
+            newData;
+        newData = this.applyMatrix(data, [
+            [1, 0, 0],
+            [0, 0, 0],
+            [0, 0, -1]
+        ], function(arr) {
+            var ret = [0, 0, 0];
+            for (var i = 0; i < 3; i++) {
+                ret[i] = YI.sum(arr[i]) + 127.5;
+            }
+            return ret;
+        });
+        copyData(newData, data);
+        this.setData(imageData);
+        return this;
     }
 
+    YI.fn.flip = function(dir){
+    	var imageData = this.getData(),
+            data = imageData.data,
+            width = imageData.width,
+            height = imageData.height;
+
+    	var x = false,
+    		y = false;
+    	dir = dir.toLowerCase();
+    	if(dir.indexOf('x')!=-1){
+    		x = true;
+    	}
+    	if(dir.indexOf('y')!=-1){
+    		y = true;
+    	}
+
+    	if(x && y){
+    		for(var x=0,xlen = width /2 ;x<xlen;x++){
+    			for(var y=0,ylen = height/2;y<ylen;y++){
+    				var topLeft = this._value(data,x,y);
+    				var bottomRight = this._value(data,width-x-1,height-y-1);
+    				this._value(data,width-x-1,height-y-1,topLeft);
+    				this._value(data,x,y,bottomRight);
+    			}
+    		}
+    		for(var x=width-1,xlen = width /2 ;x >= xlen;x--){
+    			for(var y = 0,ylen = height/2;y < ylen;y++){
+    				var topRight = this._value(data,x,y);
+    				var bottomLeft = this._value(data,width-x-1,height-y-1);
+    				this._value(data,width-x-1,height-y-1,topRight);
+    				this._value(data,x,y,bottomLeft);
+    			}
+    		}
+    	}else if(x){
+    		for(var x=0,xlen = width /2 ;x<xlen;x++){
+    			for(var y=0;y<height;y++){
+    				var left = this._value(data,x,y);
+    				var right = this._value(data,width-x-1,y);
+    				this._value(data,x,y,right);
+    				this._value(data,width-x-1,y,left);
+    			}
+    		}
+
+    	}else if(y){
+    		for(var y=0,ylen = height/2;y<ylen;y++){
+    			for(var x=0;x<width;x++){
+    				var up = this._value(data,x,y);
+    				var down = this._value(data,x,height - y - 1);
+    				this._value(data,x,y,down);
+    				this._value(data,x,height - y - 1,up);
+    			}
+    		}
+    	}
+
+        this.setData(imageData);
+        return this;
+    };
+
+
+
     window.YI = YI;
+    // AMD
+	if (typeof define == 'function' && define.amd) {
+    	define('YI', [], function() {
+      		return YI;
+   		});
+  	}
+
 })(window);

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title>数字图像处理</title>
     <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
     <!-- <link href="http://apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"> -->
     <link rel="stylesheet" href="assert/bootstrap/css/bootstrap.min.css">
@@ -43,7 +43,7 @@
     <div class="container">
         <div class="row" id="header">
             <div class="page-header">
-                <h1>数字图像处理</h1>
+                <h1><small><a href="https://github.com/wy-ei/YI.js">YI.js - 基于 HTML5 Canvas 的图像处理库</a></small></h1>
             </div>
         </div>
         <div class="row">
@@ -72,7 +72,7 @@
                             <button type="button" class="btn btn-default" data-method="origin">原图</button>
                             <button type="button" class="btn btn-default" data-method="gray">灰度图</button>
                             <button type="button" class="btn btn-default" data-method="pseudoColor">伪彩色</button>
-                            <button type="button" class="btn btn-default" data-method="flip">反色</button>
+                            <button type="button" class="btn btn-default" data-method="invert">反色</button>
                             <div class="btn-group" role="group">
                                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     图像分割
@@ -109,16 +109,30 @@
                                     <li><a href="#" data-method="canny">Canny 算子</a></li>
                                     <li><a href="#" data-method="roberts">Roberts 算子</a></li>
                                     <li><a href="#" data-method="wallis">Wallis 算子</a></li>
+                                    <li><a href="#" data-method="priwitt">Priwitt 算子</a></li>
+                                    
                                 </ul>
                             </div>
                             <button type="button" class="btn btn-default" data-method="sepia">复古</button>
                             <button type="button" class="btn btn-default" data-method="oilPainting">油画</button>
-                            <button type="button" class="btn btn-default" data-method="sharp">锐化</button>
                             <button type="button" class="btn btn-default" data-method="posterize">色调分离</button>
                             <button type="button" class="btn btn-default" data-method="embossment">浮雕效果</button>
                             <button type="button" class="btn btn-default" data-method="gamma">gamma 调节</button>
                             <button type="button" class="btn btn-default" data-method="salt">椒盐噪声</button>
                             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal" data-method="histogram">查看直方图</button>
+
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    翻转
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#" data-method="flip-x">水平方向翻转</a></li>
+                                    <li><a href="#" data-method="flip-y">垂直方向翻转</a></li>
+                                    <li><a href="#" data-method="flip-xy">水平、垂直方向翻转</a></li>
+                                    
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -34,8 +34,8 @@ $(document).ready(function() {
 	        case 'gray':
 	            pp.gray().replace(img);
 	            break;
-	        case 'flip':
-	            pp.flip().replace(img);
+	        case 'invert':
+	            pp.invert().replace(img);
 	            break;
 	        case 'pseudoColor':
 	            pp.pseudoColor().replace(img);
@@ -74,6 +74,9 @@ $(document).ready(function() {
 	        case 'laplace':
 	            pp.differentialOperator('laplace').replace(img);
 	            break;
+	        case 'priwitt':
+	        	pp.differentialOperator('priwitt').replace(img);
+	        	break;
 	        case 'roberts':
 	        	pp.differentialOperator('roberts').replace(img);
 	            break;
@@ -89,9 +92,6 @@ $(document).ready(function() {
 	        case 'oilPainting':
 	            pp.oilPainting().replace(img);
 	            break;
-	        case 'sharp':
-	            pp.sharp().replace(img);
-	            break;
 	        case 'posterize':
 	            pp.posterize().replace(img);
 	            break;
@@ -103,10 +103,8 @@ $(document).ready(function() {
 	            break;
 	        case 'histogram':
 	        	var histogram = pp.histogram();
-	        	// histogram = histogram.map(function(value,index){
-	        	// 	return value * 1000;
-	        	// });
 	        	// draw chart
+	        	// Chart.js
 	        	var data = {
 	        		labels:[],
 	        		datasets : [{
@@ -134,18 +132,26 @@ $(document).ready(function() {
 					pointHitDetectionRadius : 1,
 					datasetFill : false,
 					datasetStrokeWidth : 1,
-					tooltipTemplate: "<%= value %>",
+					tooltipTemplate: "<%= value %>"
 				});
-				console.log(c);
 	        	$histogram.data('chart',c);
 				$('#modalLabel').text('灰度分布直方图');
 				break;
 			case 'salt':
-				var n = prompt('请输入噪声的数量', 100);
-				n = parseInt(n, 10) || 100;
-				var r = prompt('请输入噪声的大小(px)', 2);
+				var n = prompt('请输入噪声的数量', 500);
+				n = parseInt(n, 10) || 500;
+				var r = prompt('请输入噪声的大小(px)', 1);
 				r = parseInt(r, 10) || 1;
 				pp.noise('salt',n,r).replace(img);
+				break;
+			case 'flip-xy':
+				pp.flip('xy').replace(img);
+				break;
+			case 'flip-x':
+				pp.flip('x').replace(img);
+				break;
+			case 'flip-y':
+				pp.flip('y').replace(img);
 				break;
 	        default:
 	            break;
