@@ -443,7 +443,7 @@
 
           for (var x = -rowOffset; x <= _rowOffset; x++) {
             for (var y = -colOffset; y <= _colOffset; y++) {
-              var arr = this._value(data, i + x, j + y);
+              var arr = this._value(data, j + y, i + x);
               var m = matrixs[n][x + rowOffset][y + colOffset];
               val[0].push(arr[0] * m);
               val[1].push(arr[1] * m);
@@ -453,7 +453,7 @@
           mVal.push(val);
         }
         var arr = predicate(mVal);
-        this._value(retData, i, j, arr);
+        this._value(retData, j, i, arr);
       }
     }
     return retData;
@@ -492,7 +492,7 @@
         ];
         for (var x = -rowOffset; x <= _rowOffset; x++) {
           for (var y = -colOffset; y <= _colOffset; y++) {
-            var arr = this._value(data, i + x, j + y);
+            var arr = this._value(data, j + y, i + x);
             var n = matrix[x + rowOffset][y + colOffset];
             val[0].push(arr[0] * n);
             val[1].push(arr[1] * n);
@@ -508,7 +508,7 @@
           arr[1] = k * YI.sum(val[1]);
           arr[2] = k * YI.sum(val[2]);
         }
-        this._value(retData, i, j, arr);
+        this._value(retData, j, i, arr);
       }
     }
     return retData;
@@ -746,8 +746,8 @@
       r = r || 1;
       var offset = Math.floor(r / 2);
       for (var i = 0; i < n; i++) {
-        var x = offset + Math.floor(Math.random() * (height - offset));
-        var y = offset + Math.floor(Math.random() * (width - offset));
+        var x = offset + Math.floor(Math.random() * (width - offset));
+        var y = offset + Math.floor(Math.random() * (height - offset));
         var salt = Math.random() > 0.5 ? 255 : 0;
         if (r != 1) {
 
