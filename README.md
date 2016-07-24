@@ -1,6 +1,6 @@
 ## yi.js
 
-一个基于 HTML5 Canvas 的图像处理库
+学习《数字图像处理》课程时为了验证图像处理算法完成的一个基于 canvas 的数字图像处理库。
 
 [查看demo](http://wy-ei.com/yi.js/)
 
@@ -12,7 +12,7 @@
 <script type="text/javascript" src='yi.js'></script>>
 ```
 
-2. 处理图像 
+2. 处理图像
 
 ```javascript
 // 得到一幅图片
@@ -22,23 +22,32 @@ var img = document.getElementByTagName('img')[0];
 var yi = new YI(img);
 
 // 转换为灰度图像，再进行二值化处理，再替换原图像
-yi.gray().threshold().replace(img);
+yi.gray().then(function(){
+    return yi.threshold('binary',100);
+}).then(function(yi){
+    yi.replace(img);
+});
 ```
+
+## 说明
+
+yi.js 中除了 replace 方法外，其余方法均返回 Promise 对象。因为使用了 Web Worker 来处理对象，所以处理过程是异步的，不会阻塞 UI 。
 
 ## 示例
 
-```
+```javascript
 var img = document.getElementById('target-image');
 var yi = new YI(img);
 
 // 进行高斯滤波
-yi.filter('gaussian').replace(img);
-
-// 使用 Sobel 微分算子
-yi.differentialOperator('soble').replace(img);
+yi.filter('gaussian').then(function(yi){
+    yi.replace(img);
+});
 
 // 恢复原图
-yi.origin().replace(img);
+yi.origin().then(function(yi){
+    yi.replace(img);
+});
 ```
 
 ## API
@@ -56,60 +65,32 @@ yi.origin().replace(img);
 + pseudoColor：伪彩色
 
 + threshold：图像分割处理。这个函数可以有多个参数：
-  
+
 ```javascript
 // 使用自定义阈值进行图像分割 ( 第二个参数为分割的阈值 )
-yi.threshold('binary',100).replace(img);
+yi.threshold('binary',100);
 
 // 使用 Otsu 算法进行图像分割
-yi.threshold('otsu').replace(img);
+yi.threshold('otsu');
 
 // 使用最大类间类内方差比法进行图像分割
-yi.threshold('mr').replace(img);
+yi.threshold('mr');
 ```
 
 + filter：图像滤波处理。该函数有多个可选参数：
 
 ```javascript
 // 均值滤波
-yi.filter('mean').replace(img);
+yi.filter('mean');
 
 // 中值滤波
-yi.filter('mid').replace(img);
+yi.filter('mid');
 
 // 高斯滤波
-yi.filter('gaussian').replace(img);
+yi.filter('gaussian');
 
 // K近邻(KNN)平滑滤波
-yi.filter('knn').replace(img);
-```
-
-+ differentialOperator：对图像运用微分算子。该函数有多个可选的微分算子。
-
-```javascript
-// 水平微分算子
-yi.differentialOperator('horizontal').replace(img);
-
-// 垂直微分算子
-yi.differentialOperator('vertical').replace(img);
-
-// soble 算子
-yi.differentialOperator('soble').replace(img);
-
-// laplace 算子
-yi.differentialOperator('laplace').replace(img);
-
-// priwitt 算子
-yi.differentialOperator('priwitt').replace(img);
-
-// roberts 算子
-yi.differentialOperator('roberts').replace(img);
-
-// wallis 算子
-yi.differentialOperator('wallis').replace(img);
-
-// canny 算子
-yi.differentialOperator('canny').replace(img);
+yi.filter('knn');
 ```
 
 + sepia：复古效果
@@ -126,25 +107,20 @@ yi.differentialOperator('canny').replace(img);
 
 ```javascript
 // 上下翻转 (Y轴镜像)
-yi.flip('y').replace(img);
+yi.flip('y');
 
 // 左右翻转 (X轴镜像)
-yi.flip('x').replace(img);
+yi.flip('x');
 
 // 上下、左右翻转
-yi.flip('xy').replace(img);
+yi.flip('xy');
 ```
 + noise：添加噪声 (目前只能添加椒盐噪声，使用方法如下)
 
-```javascripe
+```javascript
 // 添加椒盐噪声，数量为1000个，大小为边长为 2 像素的点
-yi.noise('salt',1000,2).replace(img);
+yi.noise('salt',1000,2);
 ```
-
-### 一个特殊的方法
-
-+ histogram:得到图像的灰度分布。返回值为一个256个元素的数组，数值中的值为对应的灰度级的概率。
-
 
 ## License
 

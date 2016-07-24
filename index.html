@@ -8,30 +8,23 @@
     <!-- <link href="http://apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"> -->
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <style type="text/css">
-    body {
-        margin: 0;
-    }
+        body {
+            margin: 0;
+        }
+        .btn{
+            margin-top: 10px;
+        }
+        .img-container{
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #source-img {
+            display: inline-block;
+        }
 
-    button {
-        margin-top: 10px;
-    }
-
-    canvas {
-		margin: auto;
-		display:block;
-    }
-    .show{
-    	display:block;
-    }
-
-    #source-img {
-        display: block;
-        margin: auto;
-    }
-    #choose-operator{
-    	display:none;
-    }
-
+        .hide-when-no-img {
+            display: none;
+        }
     </style>
 </head>
 
@@ -44,33 +37,34 @@
         </div>
         <div class="row">
             <div class="col-md-8">
-                <img class="img-responsive" id="source-img">
+                <div class="img-container">
+                    <img class="img-responsive" id="source-img">
+                </div>
             </div>
             <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">请选择要处理的图片：</h3>
+                        <h3 class="panel-title">选择要处理的图片：</h3>
                     </div>
                     <div class="panel-body">
-                        <form role="form">
-                            <div class="form-group">
-                                <input type="file" id="load-img">
+                            <div class="btn-group">
+                                <input type="file" alt="点击选择图片" accept="image/jpeg,image/x-png,image/x-MS-bmp" class="btn btn-default btn-sm" id="load-img">
+                                <button type="button" class="btn btn-primary btn-sm hide-when-no-img" data-method="origin" id="download">下载图片</button>
                             </div>
-                        </form>
                     </div>
                 </div>
-                <div class="panel panel-default" id="choose-operator">
+                <div class="panel panel-default hide-when-no-img">
                     <div class="panel-heading">
-                        <h3 class="panel-title">请选择要进行的操作：</h3>
+                        <h3 class="panel-title">选择要进行的操作：</h3>
                     </div>
                     <div class="panel-body">
-                        <div class="" role="group" aria-label="..." id="select-process-method">
-                            <button type="button" class="btn btn-default" data-method="origin">原图</button>
-                            <button type="button" class="btn btn-default" data-method="gray">灰度图</button>
-                            <button type="button" class="btn btn-default" data-method="pseudoColor">伪彩色</button>
-                            <button type="button" class="btn btn-default" data-method="invert">反色</button>
+                        <div role="group" aria-label="..." id="select-process-method">
+                            <button type="button" class="btn btn-default btn-sm" data-method="origin">原图</button>
+                            <button type="button" class="btn btn-default btn-sm" data-method="gray">灰度图</button>
+                            <button type="button" class="btn btn-default btn-sm" data-method="pseudoColor">伪彩色</button>
+                            <button type="button" class="btn btn-default btn-sm" data-method="invert">反色</button>
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     图像分割
                                     <span class="caret"></span>
                                 </button>
@@ -82,7 +76,7 @@
                                 </ul>
                             </div>
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     滤波
                                     <span class="caret"></span>
                                 </button>
@@ -93,33 +87,14 @@
                                     <li><a href="#" data-method="knn">KNN 滤波</a></li>
                                 </ul>
                             </div>
-                            <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    微分算子
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#" data-method="horizontal">水平方向微分算子</a></li>
-                                    <li><a href="#" data-method="vertical">垂直方向微分算子</a></li>
-                                    <li><a href="#" data-method="soble">Soble 算子</a></li>
-                                    <li><a href="#" data-method="laplace">Laplace 算子</a></li>
-                                    <li><a href="#" data-method="canny">Canny 算子</a></li>
-                                    <li><a href="#" data-method="roberts">Roberts 算子</a></li>
-                                    <li><a href="#" data-method="wallis">Wallis 算子</a></li>
-                                    <li><a href="#" data-method="priwitt">Priwitt 算子</a></li>
-
-                                </ul>
-                            </div>
-                            <button type="button" class="btn btn-default" data-method="sepia">复古</button>
-                            <button type="button" class="btn btn-default" data-method="oilPainting">油画</button>
-                            <button type="button" class="btn btn-default" data-method="posterize">色调分离</button>
-                            <button type="button" class="btn btn-default" data-method="embossment">浮雕效果</button>
-                            <button type="button" class="btn btn-default" data-method="gamma">gamma 调节</button>
-                            <button type="button" class="btn btn-default" data-method="salt">椒盐噪声</button>
-                            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal" data-method="histogram">查看直方图</button>
+                            <button type="button" class="btn btn-default btn-sm" data-method="sepia">复古</button>
+                            <button type="button" class="btn btn-default btn-sm" data-method="oilPainting">油画</button>
+                            <button type="button" class="btn btn-default btn-sm" data-method="posterize">色调分离</button>
+                            <button type="button" class="btn btn-default btn-sm" data-method="gamma">gamma 调节</button>
+                            <button type="button" class="btn btn-default btn-sm" data-method="salt">椒盐噪声</button>
 
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     翻转
                                     <span class="caret"></span>
                                 </button>
@@ -127,53 +102,26 @@
                                     <li><a href="#" data-method="flip-x">水平方向翻转</a></li>
                                     <li><a href="#" data-method="flip-y">垂直方向翻转</a></li>
                                     <li><a href="#" data-method="flip-xy">水平、垂直方向翻转</a></li>
-
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="panel panel-default">
+                <div class="panel panel-default hide-when-no-img">
                     <div class="panel-heading">
-                        <h3 class="panel-title">处理状态：</h3>
+                        <h3 class="panel-title">处理进度：</h3>
                     </div>
                     <div class="panel-body">
-						<p id="state">未开始</p>
+                        <div class="progress">
+                            <div class="progress-bar active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0.6;">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-
-
-	<!-- Modal -->
-	<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
-	  <div class="modal-dialog modal-lg" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        <h4 class="modal-title" id="modalLabel">Modal title</h4>
-	      </div>
-	      <div class="modal-body">
-			<canvas id="histogram" width="700" height="400"></canvas>
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-	      </div>
-	    </div>
-	  </div>
-	</div>
-
-
-    <!--
-    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.js"></script>
-    <script src="http://apps.bdimg.com/libs/bootstrap/3.3.4/js/bootstrap.js"></script>
-    -->
-    <script src="js/jquery-2.1.4.min.js"></script>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src='js/Chart.min.js'></script>
     <script src="js/require.js" data-main="js/app"></script>
 </body>
 
