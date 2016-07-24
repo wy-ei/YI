@@ -6,20 +6,16 @@
     <title>数字图像处理</title>
     <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
     <!-- <link href="http://apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"> -->
-    <link rel="stylesheet" href="assert/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <style type="text/css">
     body {
-        position: absolute;
-        height: 100%;
-		overflow:hidden;
-        width: 100%;
         margin: 0;
     }
-    
+
     button {
         margin-top: 10px;
     }
-    
+
     canvas {
 		margin: auto;
 		display:block;
@@ -27,7 +23,7 @@
     .show{
     	display:block;
     }
-    
+
     #source-img {
         display: block;
         margin: auto;
@@ -43,7 +39,7 @@
     <div class="container">
         <div class="row" id="header">
             <div class="page-header">
-                <h1><small><a href="https://github.com/wy-ei/yi.js">yi.js - 基于 HTML5 Canvas 的图像处理库</a></small></h1>
+                <h1><small><a href="https://github.com/wy-ei/yi.js">YI</a></small></h1>
             </div>
         </div>
         <div class="row">
@@ -82,6 +78,7 @@
                                     <li><a href="#" data-method="mr">最大类间、类内方差比法</a></li>
                                     <li><a href="#" data-method="otsu">最大类间方差法</a></li>
                                     <li><a href="#" data-method="binary">自定义阈值法</a></li>
+                                    <li><a href="#" data-method="tozero">tozero</a></li>
                                 </ul>
                             </div>
                             <div class="btn-group" role="group">
@@ -110,7 +107,7 @@
                                     <li><a href="#" data-method="roberts">Roberts 算子</a></li>
                                     <li><a href="#" data-method="wallis">Wallis 算子</a></li>
                                     <li><a href="#" data-method="priwitt">Priwitt 算子</a></li>
-                                    
+
                                 </ul>
                             </div>
                             <button type="button" class="btn btn-default" data-method="sepia">复古</button>
@@ -130,7 +127,7 @@
                                     <li><a href="#" data-method="flip-x">水平方向翻转</a></li>
                                     <li><a href="#" data-method="flip-y">垂直方向翻转</a></li>
                                     <li><a href="#" data-method="flip-xy">水平、垂直方向翻转</a></li>
-                                    
+
                                 </ul>
                             </div>
                         </div>
@@ -142,14 +139,14 @@
                         <h3 class="panel-title">处理状态：</h3>
                     </div>
                     <div class="panel-body">
-						<p id="state">未开始:</p>
+						<p id="state">未开始</p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>	
+    </div>
 
-	
+
 
 	<!-- Modal -->
 	<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
@@ -175,10 +172,9 @@
     <script src="http://apps.bdimg.com/libs/bootstrap/3.3.4/js/bootstrap.js"></script>
     -->
     <script src="js/jquery-2.1.4.min.js"></script>
-    <script src="assert/bootstrap/js/bootstrap.min.js"></script>
-    <script src='js/yi.js'></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src='js/Chart.min.js'></script>
-    <script src="js/app.js"></script>
+    <script src="js/require.js" data-main="js/app"></script>
 </body>
 
 </html>
