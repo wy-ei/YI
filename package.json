@@ -1,6 +1,6 @@
 {
   "name": "yi.js",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "a library base on HTML5 canvas for image process on browser",
   "main": "yi.js",
   "scripts": {
@@ -11,8 +11,8 @@
     "url": "git+https://github.com/wy-ei/yi.js.git"
   },
   "keywords": [
-    "image",
-    "process"
+    "image process",
+    "canvas"
   ],
   "author": "wy-ei",
   "license": "MIT",
