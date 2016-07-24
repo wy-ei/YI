@@ -2,7 +2,7 @@
   "name": "yi.js",
   "version": "0.3.0",
   "description": "a library base on HTML5 canvas for image process on browser",
-  "main": "yi.js",
+  "main": "dist/yi.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
