@@ -121,6 +121,25 @@ yi.flip('xy');
 yi.noise('salt', 1000, 2);
 ```
 
+## 事件
+
+你可以在 YI 的实例上监听 `progress` 事件，获得当前的处理进度
+
+```js
+var img = document.getElementById('target-image');
+var yi = new YI(img);
+
+// 进行高斯滤波
+yi.filter('gaussian').then(function(yi){
+    yi.replace(img);
+});
+
+// 监听 progress 事件
+yi.on('progress', function(progress){
+    // progress 是一个介于 0 ~ 1 之间的小数
+});
+```
+
 ## License
 
 MIT
