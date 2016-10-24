@@ -81,7 +81,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        source = new Image;
 
 	    source.src = url;
-
 	    source.onload = function() {
 	        var canvas = document.createElement('canvas'),
 	            cxt = canvas.getContext('2d'),
@@ -98,6 +97,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.height = height;
 	        this.cxt = cxt;
 	        this.img = img;
+	        this.emit('load');
+	        this.loaded = true;
 	    }.bind(this);
 	}
 
@@ -106,7 +107,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	YI.fn = YI.prototype;
 
 	YI.fn.getImageData = function() {
-	    return this.cxt.getImageData(0, 0, this.width, this.height);
+	    var _this = this;
+	    return new Promise(function(resolve){
+	        if(_this.loaded){
+	            resolve(_this.cxt.getImageData(0, 0, _this.width, _this.height));
+	        }else{
+	            _this.on('load', function(){
+	                resolve(_this.cxt.getImageData(0, 0, _this.width, _this.height));
+	            });
+	        }
+	    });
 	};
 
 	YI.fn.notify = function(progress) {
@@ -122,29 +132,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var _this = this;
 	    data = data || {};
 	    var worker = YI.createWorker(workerBuilder);
-	    var imageData = this.getImageData();
-	    data.data = imageData.data;
-	    data.width = imageData.width;
-	    data.height = imageData.height;
 	    return new Promise(function(resolve, reject) {
-	        worker.postMessage(data);
-	        worker.onmessage = function(evt) {
-	            if (evt.data.type === 'data') {
-	                var src = evt.data.data;
-	                YI.copy(src, imageData.data);
-	                _this.putImageData(imageData);
-	                worker.terminate();
-	                resolve(_this);
-	            } else if (evt.data.type === 'progress') {
-	                _this.notify(evt.data.progress);
-	            }
-	        };
-	        worker.onerror = function(err) {
-	            reject(err);
-	        };
+	        _this.getImageData().then(function(imageData){
+	            data.data = imageData.data;
+	            data.width = imageData.width;
+	            data.height = imageData.height;
+
+	            worker.postMessage(data);
+	            worker.onmessage = function(evt) {
+	                if (evt.data.type === 'data') {
+	                    var src = evt.data.data;
+	                    YI.copy(src, imageData.data);
+	                    _this.putImageData(imageData);
+	                    worker.terminate();
+	                    resolve(_this);
+	                } else if (evt.data.type === 'progress') {
+	                    _this.notify(evt.data.progress);
+	                }
+	            };
+	            worker.onerror = function(err) {
+	                reject(err);
+	            };
+	        })
 	    });
 	};
-
 
 	module.exports = YI;
 
